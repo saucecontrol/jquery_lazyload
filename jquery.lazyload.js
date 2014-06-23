@@ -9,11 +9,12 @@
  * Project home:
  *   http://www.appelsiini.net/projects/lazyload
  *
- * Version:  1.9.3
+ * Version:  1.9.3 gbcr mod by Clinton Ingram
  *
  */
 
 (function($, window, document, undefined) {
+    "use strict";
     var $window = $(window);
 
     $.fn.lazyload = function(options) {
@@ -170,58 +171,25 @@
     /* Convenience methods in jQuery namespace.           */
     /* Use as  $.belowthefold(element, {threshold : 100, container : window}) */
 
-    $.belowthefold = function(element, settings) {
-        var fold;
+    function makeUtility(func) {
+        return function (element, settings) {
+            var s = settings || {},
+                e = box(element[0] || element),
+                c = box(s.container ? s.container[0] || s.container : window);
 
-        if (settings.container === undefined || settings.container === window) {
-            fold = (window.innerHeight ? window.innerHeight : $window.height()) + $window.scrollTop();
-        } else {
-            fold = $(settings.container).offset().top + $(settings.container).height();
-        }
+            return e.empty || c.empty
+                ? undefined
+                : func.call(e, e, s.threshold ? c.pad(s.threshold) : c);
+        };
+    }
 
-        return fold <= $(element).offset().top - settings.threshold;
-    };
-
-    $.rightoffold = function(element, settings) {
-        var fold;
-
-        if (settings.container === undefined || settings.container === window) {
-            fold = $window.width() + $window.scrollLeft();
-        } else {
-            fold = $(settings.container).offset().left + $(settings.container).width();
-        }
-
-        return fold <= $(element).offset().left - settings.threshold;
-    };
-
-    $.abovethetop = function(element, settings) {
-        var fold;
-
-        if (settings.container === undefined || settings.container === window) {
-            fold = $window.scrollTop();
-        } else {
-            fold = $(settings.container).offset().top;
-        }
-
-        return fold >= $(element).offset().top + settings.threshold  + $(element).height();
-    };
-
-    $.leftofbegin = function(element, settings) {
-        var fold;
-
-        if (settings.container === undefined || settings.container === window) {
-            fold = $window.scrollLeft();
-        } else {
-            fold = $(settings.container).offset().left;
-        }
-
-        return fold >= $(element).offset().left + settings.threshold + $(element).width();
-    };
-
-    $.inviewport = function(element, settings) {
-         return !$.rightoffold(element, settings) && !$.leftofbegin(element, settings) &&
-                !$.belowthefold(element, settings) && !$.abovethetop(element, settings);
-     };
+    $.extend({
+        belowthefold: makeUtility(function(e, c) { return e.top     > c.bottom; }),
+        rightoffold : makeUtility(function(e, c) { return e.left    > c.right;  }),
+        abovethetop : makeUtility(function(e, c) { return e.bottom  < c.top;    }),
+        leftofbegin : makeUtility(function(e, c) { return e.right   < c.left    }),
+        inviewport  : makeUtility(function(e, c) { return e.compareTo(c) === 0; })
+    });
 
     /* Custom selectors for your convenience.   */
     /* Use as $("img:below-the-fold").something() or */
@@ -238,5 +206,60 @@
         "right-of-fold"  : function(a) { return $.rightoffold(a, {threshold : 0}); },
         "left-of-fold"   : function(a) { return !$.rightoffold(a, {threshold : 0}); }
     });
+
+    /* Measurement logic. */
+    /* Uses getBoundingClientRect() where possible for maximum performance. */
+    /* Includes jQuery fallbacks for maximum compatibility. */
+
+    function box(element) {
+        if (!(this instanceof box)) {
+            return new box(element);
+        }
+
+        if (element === window) {
+            this.top    = box.gbcr ? 0 : $window.scrollTop();
+            this.left   = box.gbcr ? 0 : $window.scrollLeft();
+            this.bottom = this.top  + (window.innerHeight || $window.height());
+            this.right  = this.left + (window.innerWidth  || $window.width());
+        } else if (box.gbcr) {
+            var rect = element.getBoundingClientRect();
+            this.top    = rect.top;
+            this.left   = rect.left;
+            this.bottom = rect.bottom;
+            this.right  = rect.right;
+        } else if (element.style.display === "none" || !$.contains(document, element)) {
+            this.top = this.left = this.bottom = this.right = 0;
+        } else {
+            var $element = $(element),
+                offset = $element.offset();
+            this.top    = offset.top;
+            this.left   = offset.left;
+            this.bottom = this.top  + $element.outerHeight();
+            this.right  = this.left + $element.outerWidth();
+        }
+
+        this.empty = 0 === this.top === this.bottom === this.left === this.right;
+    }
+
+    box.gbcr = undefined !== document.documentElement.getBoundingClientRect;
+
+    box.prototype.pad = function(n) {
+        this.top    -= n;
+        this.left   -= n;
+        this.bottom += n;
+        this.right  += n;
+
+        return this;
+    };
+
+    box.prototype.compareTo = function(other) {
+        return this.empty || other.empty
+            ? undefined
+            : this.bottom < other.top    || this.right < other.left
+            ? -1 /* before */
+            : this.top    > other.bottom || this.left  > other.right
+            ? 1  /* after */
+            : 0; /* intersecting */
+    }
 
 })(jQuery, window, document);
