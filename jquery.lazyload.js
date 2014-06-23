@@ -28,8 +28,8 @@
             container       : window,
             data_attribute  : "original",
             prune_detached  : false,
-            appear          : null,
-            load            : null,
+            appear          : $.noop,
+            load            : $.noop,
             placeholder     : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"
         };
 
@@ -106,10 +106,9 @@
             /* When appear is triggered load original image. */
             $self.one("appear", function() {
                 if (!this.loaded) {
-                    if (settings.appear) {
-                        var elements_left = elements.length;
-                        settings.appear.call(self, elements_left, settings);
-                    }
+
+                settings.appear.call(self, elements.length, settings);
+
                     $("<img />")
                         .bind("load", function() {
 
@@ -124,10 +123,7 @@
 
                             self.loaded = true;
 
-                            if (settings.load) {
-                                var elements_left = elements.length;
-                                settings.load.call(self, elements_left, settings);
-                            }
+                            settings.load.call(self, elements.length, settings);
                         })
                         .attr("src", $self.attr("data-" + settings.data_attribute));
                 }
