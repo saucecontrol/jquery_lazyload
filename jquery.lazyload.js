@@ -196,15 +196,15 @@
     /* $("img").filter(":below-the-fold").something() which is faster */
 
     $.extend($.expr[":"], {
-        "below-the-fold" : function(a) { return $.belowthefold(a, {threshold : 0}); },
-        "above-the-top"  : function(a) { return $.abovethetop(a, {threshold : 0}); },
-        "right-of-screen": function(a) { return $.rightoffold(a, {threshold : 0}); },
-        "left-of-screen" : function(a) { return $.leftofbegin(a, {threshold : 0}); },
-        "in-viewport"    : function(a) { return $.inviewport(a, {threshold : 0}); },
+        "below-the-fold" : function(a) { return $.belowthefold(a); },
+        "above-the-top"  : function(a) { return $.abovethetop(a); },
+        "right-of-screen": function(a) { return $.rightoffold(a); },
+        "left-of-screen" : function(a) { return $.leftofbegin(a); },
+        "in-viewport"    : function(a) { return $.inviewport(a); },
         /* Maintain BC for couple of versions. */
-        "above-the-fold" : function(a) { return !$.belowthefold(a, {threshold : 0}); },
-        "right-of-fold"  : function(a) { return $.rightoffold(a, {threshold : 0}); },
-        "left-of-fold"   : function(a) { return !$.rightoffold(a, {threshold : 0}); }
+        "above-the-fold" : function(a) { return !$.belowthefold(a); },
+        "right-of-fold"  : function(a) { return $.rightoffold(a); },
+        "left-of-fold"   : function(a) { return !$.rightoffold(a); }
     });
 
     /* Measurement logic. */
