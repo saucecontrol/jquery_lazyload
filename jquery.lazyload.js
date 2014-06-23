@@ -35,18 +35,16 @@
 
         function update() {
             var counter = 0;
-            var prune_list = [];
+            var prune_list = [], trigger_list = [];
             var container_box, position;
 
             elements.each(function() {
-                var $this = $(this);
-
                 container_box = container_box || box($container[0]).pad(options.threshold);
                 position = box(this).compareTo(container_box);
                 if (undefined === position && settings.prune_detached && !$.contains(document, this)) {
                     prune_list.push(this);
                 } else if (0 === position) {
-                    $this.trigger("appear");
+                    trigger_list.push(this);
                     /* if we found an image we'll load, reset the counter */
                     counter = 0;
                 } else if (1 === position) {
@@ -55,6 +53,7 @@
             });
 
             elements = elements.not(prune_list);
+            setTimeout(function () { $(trigger_list).trigger("appear"); }, 0);
         }
 
         if(options) {
