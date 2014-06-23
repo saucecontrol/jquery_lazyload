@@ -39,6 +39,10 @@
             var container_box, position;
 
             elements.each(function() {
+                if (this.loaded) {
+                    return prune_list.push(this);
+                }
+
                 container_box = container_box || box($container[0]).pad(options.threshold);
                 position = box(this).compareTo(container_box);
                 if (undefined === position && settings.prune_detached && !$.contains(document, this)) {
@@ -114,12 +118,6 @@
                             $self[settings.effect](settings.effect_speed);
 
                             self.loaded = true;
-
-                            /* Remove image from array so it is not looped next time. */
-                            var temp = $.grep(elements, function(element) {
-                                return !element.loaded;
-                            });
-                            elements = $(temp);
 
                             if (settings.load) {
                                 var elements_left = elements.length;
