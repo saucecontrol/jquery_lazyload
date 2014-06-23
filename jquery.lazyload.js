@@ -142,10 +142,8 @@
             /* When wanted event is triggered load original image */
             /* by triggering appear.                              */
             if (0 !== settings.event.indexOf("scroll")) {
-                $self.bind(settings.event, function() {
-                    if (!self.loaded) {
-                        $self.trigger("appear");
-                    }
+                $self.one(settings.event, function() {
+                    $self.trigger("appear");
                 });
             }
         });
