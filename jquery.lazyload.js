@@ -122,14 +122,20 @@
                                 return settings.error.call(self, elements.length, settings);
                             }
 
-                            var original = $self.attr("data-" + settings.data_attribute);
-                            $self.hide();
+                            var animated = settings.effect !== "show" || settings.effect_speed;
+                            if (animated) {
+                                $self.hide();
+                            }
+
                             if ($self.is("img")) {
                                 $self.attr("src", original);
                             } else {
                                 $self.css("background-image", "url('" + original + "')");
                             }
-                            $self[settings.effect](settings.effect_speed);
+
+                            if (animated) {
+                                $self[settings.effect](settings.effect_speed);
+                            }
 
                             settings.load.call(self, elements.length, settings);
                         })
