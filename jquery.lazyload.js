@@ -60,6 +60,13 @@
             setTimeout(function () { $(trigger_list).trigger("appear"); }, 0);
         }
 
+        function updateAndReattach(event) {
+            update();
+            if (elements.length && event) {
+                $(this).one(event.type, updateAndReattach)
+            }
+        }
+
         if(options) {
             /* Maintain BC for a couple of versions. */
             if (undefined !== options.failurelimit) {
@@ -80,10 +87,8 @@
 
         /* Fire one scroll event per scroll. Not one scroll event per image. */
         if (0 === settings.event.indexOf("scroll")) {
-            $container.bind(settings.event, function() {
-                return update();
-            });
-        }
+           $container.one("scroll", updateAndReattach);
+         }
 
         this.each(function() {
             var self = this;
@@ -140,9 +145,7 @@
         });
 
         /* Check if something appears when window is resized. */
-        $window.bind("resize", function() {
-            update();
-        });
+        $window.one("resize", updateAndReattach);
 
         /* With IOS5 force loading images when navigating with back button. */
         /* Non optimal workaround. */
