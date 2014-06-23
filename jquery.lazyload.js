@@ -30,6 +30,7 @@
             prune_detached  : false,
             appear          : $.noop,
             load            : $.noop,
+            error           : $.noop,
             placeholder     : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"
         };
 
@@ -114,7 +115,12 @@
                 var original = $self.attr("data-" + settings.data_attribute);
                 if (original) {
                     $("<img />")
-                        .bind("load", function() {
+                        .bind("load error", function(event) {
+                            $(this).unbind();
+
+                            if ("error" === event.type) {
+                                return settings.error.call(self, elements.length, settings);
+                            }
 
                             var original = $self.attr("data-" + settings.data_attribute);
                             $self.hide();
