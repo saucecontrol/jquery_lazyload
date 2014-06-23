@@ -197,9 +197,9 @@
 
     $.extend($.expr[":"], {
         "below-the-fold" : function(a) { return $.belowthefold(a, {threshold : 0}); },
-        "above-the-top"  : function(a) { return !$.belowthefold(a, {threshold : 0}); },
+        "above-the-top"  : function(a) { return $.abovethetop(a, {threshold : 0}); },
         "right-of-screen": function(a) { return $.rightoffold(a, {threshold : 0}); },
-        "left-of-screen" : function(a) { return !$.rightoffold(a, {threshold : 0}); },
+        "left-of-screen" : function(a) { return $.leftofbegin(a, {threshold : 0}); },
         "in-viewport"    : function(a) { return $.inviewport(a, {threshold : 0}); },
         /* Maintain BC for couple of versions. */
         "above-the-fold" : function(a) { return !$.belowthefold(a, {threshold : 0}); },
