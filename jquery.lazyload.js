@@ -35,21 +35,21 @@
 
         function update() {
             var counter = 0;
+            var container_box, position;
 
             elements.each(function() {
                 var $this = $(this);
                 if (settings.skip_invisible && !$this.is(":visible")) {
                     return;
                 }
-                if ($.abovethetop(this, settings) ||
-                    $.leftofbegin(this, settings)) {
-                        /* Nothing. */
-                } else if (!$.belowthefold(this, settings) &&
-                    !$.rightoffold(this, settings)) {
+
+                container_box = container_box || box($container[0]).pad(options.threshold);
+                position = box(this).compareTo(container_box);
+                if (0 === position) {
                         $this.trigger("appear");
                         /* if we found an image we'll load, reset the counter */
                         counter = 0;
-                } else {
+                } else if (1 === position) {
                     if (++counter > settings.failure_limit) {
                         return false;
                     }
