@@ -27,7 +27,7 @@
             effect          : "show",
             container       : window,
             data_attribute  : "original",
-            skip_invisible  : true,
+            prune_detached  : false,
             appear          : null,
             load            : null,
             placeholder     : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"
@@ -35,27 +35,26 @@
 
         function update() {
             var counter = 0;
+            var prune_list = [];
             var container_box, position;
 
             elements.each(function() {
                 var $this = $(this);
-                if (settings.skip_invisible && !$this.is(":visible")) {
-                    return;
-                }
 
                 container_box = container_box || box($container[0]).pad(options.threshold);
                 position = box(this).compareTo(container_box);
-                if (0 === position) {
-                        $this.trigger("appear");
-                        /* if we found an image we'll load, reset the counter */
-                        counter = 0;
+                if (undefined === position && settings.prune_detached && !$.contains(document, this)) {
+                    prune_list.push(this);
+                } else if (0 === position) {
+                    $this.trigger("appear");
+                    /* if we found an image we'll load, reset the counter */
+                    counter = 0;
                 } else if (1 === position) {
-                    if (++counter > settings.failure_limit) {
-                        return false;
-                    }
+                    return counter++ < settings.failure_limit;
                 }
             });
 
+            elements = elements.not(prune_list);
         }
 
         if(options) {
