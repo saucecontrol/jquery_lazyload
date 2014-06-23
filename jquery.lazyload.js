@@ -169,6 +169,10 @@
             });
         }
 
+        if ("complete" !== document.readyState) {
+            $window.one("load", update);
+        }
+
         /* Force initial check if images should appear. */
         update();
 
