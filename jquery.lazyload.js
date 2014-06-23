@@ -157,9 +157,7 @@
         }
 
         /* Force initial check if images should appear. */
-        $(document).ready(function() {
-            update();
-        });
+        update();
 
         return this;
     };
