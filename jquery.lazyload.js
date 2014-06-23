@@ -105,10 +105,14 @@
 
             /* When appear is triggered load original image. */
             $self.one("appear", function() {
-                if (!this.loaded) {
+                if (self.loaded) {
+                    return;
+                }
 
                 settings.appear.call(self, elements.length, settings);
 
+                var original = $self.attr("data-" + settings.data_attribute);
+                if (original) {
                     $("<img />")
                         .bind("load", function() {
 
@@ -121,12 +125,12 @@
                             }
                             $self[settings.effect](settings.effect_speed);
 
-                            self.loaded = true;
-
                             settings.load.call(self, elements.length, settings);
                         })
-                        .attr("src", $self.attr("data-" + settings.data_attribute));
+                        .attr("src", original);
                 }
+
+                self.loaded = true;
             });
 
             /* When wanted event is triggered load original image */
