@@ -88,8 +88,8 @@
 
         /* Fire one scroll event per scroll. Not one scroll event per image. */
         if (0 === settings.event.indexOf("scroll")) {
-           $container.one("scroll", updateAndReattach);
-         }
+            $container.one("scroll", updateAndReattach);
+        }
 
         this.each(function() {
             var self = this;
@@ -203,15 +203,15 @@
     /* $("img").filter(":below-the-fold").something() which is faster */
 
     $.extend($.expr[":"], {
-        "below-the-fold" : function(a) { return $.belowthefold(a); },
-        "above-the-top"  : function(a) { return $.abovethetop(a); },
-        "right-of-screen": function(a) { return $.rightoffold(a); },
-        "left-of-screen" : function(a) { return $.leftofbegin(a); },
-        "in-viewport"    : function(a) { return $.inviewport(a); },
+        "below-the-fold" : function(a) { return $.belowthefold(a);  },
+        "above-the-top"  : function(a) { return $.abovethetop(a);   },
+        "right-of-screen": function(a) { return $.rightoffold(a);   },
+        "left-of-screen" : function(a) { return $.leftofbegin(a);   },
+        "in-viewport"    : function(a) { return $.inviewport(a);    },
         /* Maintain BC for couple of versions. */
         "above-the-fold" : function(a) { return !$.belowthefold(a); },
-        "right-of-fold"  : function(a) { return $.rightoffold(a); },
-        "left-of-fold"   : function(a) { return !$.rightoffold(a); }
+        "right-of-fold"  : function(a) { return $.rightoffold(a);   },
+        "left-of-fold"   : function(a) { return !$.rightoffold(a);  }
     });
 
     /* Measurement logic. */
