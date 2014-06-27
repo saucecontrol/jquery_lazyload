@@ -64,7 +64,7 @@
         function updateAndReattach(event) {
             update();
             if (elements.length && event) {
-                $(this).one(event.type, updateAndReattach)
+                $(this).one(event.type, updateAndReattach);
             }
         }
 
@@ -194,7 +194,7 @@
         belowthefold: makeUtility(function(e, c) { return e.top     > c.bottom; }),
         rightoffold : makeUtility(function(e, c) { return e.left    > c.right;  }),
         abovethetop : makeUtility(function(e, c) { return e.bottom  < c.top;    }),
-        leftofbegin : makeUtility(function(e, c) { return e.right   < c.left    }),
+        leftofbegin : makeUtility(function(e, c) { return e.right   < c.left;   }),
         inviewport  : makeUtility(function(e, c) { return e.compareTo(c) === 0; })
     });
 
@@ -267,6 +267,6 @@
             : this.top    > other.bottom || this.left  > other.right
             ? 1  /* after */
             : 0; /* intersecting */
-    }
+    };
 
 })(jQuery, window, document);
