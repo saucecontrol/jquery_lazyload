@@ -44,8 +44,8 @@
                     return prune_list.push(this);
                 }
 
-                container_box = container_box || box($container[0]).pad(options.threshold);
-                position = box(this).compareTo(container_box);
+                container_box = container_box || Box($container[0]).pad(options.threshold);
+                position = Box(this).compareTo(container_box);
                 if (undefined === position && settings.prune_detached && !$.contains(document, this)) {
                     prune_list.push(this);
                 } else if (0 === position) {
@@ -64,7 +64,7 @@
         function updateAndReattach(event) {
             update();
             if (elements.length && event) {
-                $(this).one(event.type, updateAndReattach);
+                $(event.currentTarget).one(event.type, updateAndReattach);
             }
         }
 
@@ -181,12 +181,11 @@
     function makeUtility(func) {
         return function (element, settings) {
             var s = settings || {},
-                e = box(element[0] || element),
-                c = box(s.container ? s.container[0] || s.container : window);
+                e = Box(element[0] || element),
+                c = Box(s.container ? s.container[0] || s.container : window);
 
-            return e.empty || c.empty
-                ? undefined
-                : func.call(e, e, s.threshold ? c.pad(s.threshold) : c);
+            return e.empty || c.empty ? undefined :
+                func.call(e, e, s.threshold ? c.pad(s.threshold) : c);
         };
     }
 
@@ -218,17 +217,17 @@
     /* Uses getBoundingClientRect() where possible for maximum performance. */
     /* Includes jQuery fallbacks for maximum compatibility. */
 
-    function box(element) {
-        if (!(this instanceof box)) {
-            return new box(element);
+    function Box(element) {
+        if (!(this instanceof Box)) {
+            return new Box(element);
         }
 
         if (element === window) {
-            this.top    = box.gbcr ? 0 : $window.scrollTop();
-            this.left   = box.gbcr ? 0 : $window.scrollLeft();
+            this.top    = Box.gbcr ? 0 : $window.scrollTop();
+            this.left   = Box.gbcr ? 0 : $window.scrollLeft();
             this.bottom = this.top  + (window.innerHeight || $window.height());
             this.right  = this.left + (window.innerWidth  || $window.width());
-        } else if (box.gbcr) {
+        } else if (Box.gbcr) {
             var rect = element.getBoundingClientRect();
             this.top    = rect.top;
             this.left   = rect.left;
@@ -248,9 +247,9 @@
         this.empty = 0 === this.top === this.bottom === this.left === this.right;
     }
 
-    box.gbcr = undefined !== document.documentElement.getBoundingClientRect;
+    Box.gbcr = undefined !== document.documentElement.getBoundingClientRect;
 
-    box.prototype.pad = function(n) {
+    Box.prototype.pad = function(n) {
         this.top    -= n;
         this.left   -= n;
         this.bottom += n;
@@ -259,14 +258,11 @@
         return this;
     };
 
-    box.prototype.compareTo = function(other) {
-        return this.empty || other.empty
-            ? undefined
-            : this.bottom < other.top    || this.right < other.left
-            ? -1 /* before */
-            : this.top    > other.bottom || this.left  > other.right
-            ? 1  /* after */
-            : 0; /* intersecting */
+    Box.prototype.compareTo = function(other) {
+        return this.empty || other.empty ? undefined :
+            this.bottom < other.top    || this.right < other.left  ? -1 : /* before */
+            this.top    > other.bottom || this.left  > other.right ?  1 : /* after */
+            0; /* intersecting */
     };
 
 })(jQuery, window, document);
