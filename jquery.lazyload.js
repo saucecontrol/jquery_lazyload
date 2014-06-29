@@ -88,7 +88,7 @@
 
         /* Fire one scroll event per scroll. Not one scroll event per image. */
         if (0 === settings.event.indexOf("scroll")) {
-            $container.one("scroll", updateAndReattach);
+            $container.one(settings.event, updateAndReattach);
         }
 
         this.each(function() {
