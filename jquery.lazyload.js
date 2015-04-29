@@ -44,7 +44,7 @@
                     return prune_list.push(this);
                 }
 
-                container_box = container_box || Box($container[0]).pad(options.threshold);
+                container_box = container_box || Box($container[0]).pad(settings.threshold);
                 position = Box(this).compareTo(container_box);
                 if (undefined === position && settings.prune_detached && !$.contains(document, this)) {
                     prune_list.push(this);
@@ -158,9 +158,7 @@
         if ((/(?:iphone|ipod|ipad).*os 5/gi).test(navigator.appVersion)) {
             $window.bind("pageshow", function(event) {
                 if (event.originalEvent && event.originalEvent.persisted) {
-                    elements.each(function() {
-                        $(this).trigger("appear");
-                    });
+                    elements.trigger("appear");
                 }
             });
         }
@@ -244,7 +242,7 @@
             this.right  = this.left + $element.outerWidth();
         }
 
-        this.empty = 0 === this.top === this.bottom === this.left === this.right;
+        this.empty = 0 === this.top && 0 === this.bottom && 0 === this.left && 0 === this.right;
     }
 
     Box.gbcr = undefined !== document.documentElement.getBoundingClientRect;
